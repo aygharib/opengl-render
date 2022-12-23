@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "shaderclass.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
@@ -76,106 +78,18 @@ auto createVAO() -> unsigned int {
     return VAO;
 }
 
-auto createVertexShader() -> unsigned int {
-    const char* vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in vec3 aColor;\n"
-    "out vec3 ourColor;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos, 1.0);\n"
-    "   ourColor = aColor;\n"
-    "}\0";
-
-    // Create and compile vertex shader using source
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    // Check if vertex shader compiled successfully
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-
-    return vertexShader;
-}
-
-auto createFragmentShader() -> unsigned int {
-    const char* fragmentShaderSource="#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "in vec3 ourColor;\n"
-    "void main()\n"
-    "{\n"
-    "    FragColor = vec4(ourColor, 1.0);\n"
-    "}\0";
-
-    // Create and compile fragment shader using source    
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    // Check if fragment shader compiled successfully
-    int success;
-    char infoLog[512];
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success) {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-
-    return fragmentShader;
-}
-
-auto createShaderProgram() -> unsigned int {
-    auto vertexShader = createVertexShader();
-    auto fragmentShader = createFragmentShader();
-
-    // Shader program must be activated when rendering objects
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-
-    // Attach compiled vertex/fragment shaders
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    // Check if shader program linked successfully
-    int success;
-    char infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-
-    // Delete shader objects
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    // Activate shader program
-    glUseProgram(shaderProgram);
-
-    return shaderProgram;
-}
-
-void render(unsigned int shaderProgram, unsigned int vao) {
+void render(Shader& shaderProgram, unsigned int vao) {
     // Render
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // be sure to activate the shader
-    glUseProgram(shaderProgram);
+    glUseProgram(shaderProgram.ID);
   
     // update the uniform color
     float timeValue = glfwGetTime();
     float greenValue = sin(timeValue) / 2.0f + 0.5f;
-    int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+    int vertexColorLocation = glGetUniformLocation(shaderProgram.ID, "ourColor");
     glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
     // Draw triangle
@@ -189,11 +103,13 @@ int main() {
     initGLAD();
     setCallbackFunctions(window);
 
-    auto shaderProgram = createShaderProgram();
+    Shader shaderProgram("/home/wumbo/dev/opengl-by-example/shader.vs", "/home/wumbo/dev/opengl-by-example/shader.fs");
     auto vao = createVAO();
 
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
+        
+        shaderProgram.use();
         render(shaderProgram, vao);
 
         // GLFW swap buffers and poll IO events
