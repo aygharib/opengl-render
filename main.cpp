@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 
 #include <glad/glad.h>
@@ -63,9 +64,11 @@ auto createVAO() -> unsigned int {
     // Copy vertices array in a buffer for OpenGL to use
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
     // Set vertex attributes pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    
     return VAO;
 }
 
@@ -103,9 +106,10 @@ auto createVertexShader() -> unsigned int {
 auto createFragmentShader() -> unsigned int {
     const char* fragmentShaderSource="#version 330 core\n"
     "out vec4 FragColor;\n"
+    "uniform vec4 ourColor;\n"
     "void main()\n"
     "{\n"
-    "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "    FragColor = ourColor;\n"
     "}\0";
 
     // Create and compile fragment shader using source    
@@ -163,8 +167,16 @@ void render(unsigned int shaderProgram, unsigned int vao) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Draw triangle
+    // be sure to activate the shader
     glUseProgram(shaderProgram);
+  
+    // update the uniform color
+    float timeValue = glfwGetTime();
+    float greenValue = sin(timeValue) / 2.0f + 0.5f;
+    int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+    // Draw triangle
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
