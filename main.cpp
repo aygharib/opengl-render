@@ -100,7 +100,7 @@ auto createVAO() -> unsigned int {
     return VAO;
 }
 
-void render(Shader& shaderProgram, unsigned int vao, unsigned int texture) {
+void render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsigned int texture2) {
     // Render
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -116,20 +116,16 @@ void render(Shader& shaderProgram, unsigned int vao, unsigned int texture) {
 
     // Draw square
     glBindVertexArray(vao);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glActiveTexture(GL_TEXTURE1); // activate the texture unit first before binding texture
+    glBindTexture(GL_TEXTURE_2D, texture2);
+
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-int main() {
-    initGLFW();
-    auto window = createWindow();
-    initGLAD();
-    setCallbackFunctions(window);
-
-    Shader shaderProgram("/home/wumbo/dev/opengl-by-example/shader.vs", "/home/wumbo/dev/opengl-by-example/shader.fs");
-    auto vao = createVAO();
-
+auto createTexture(const char* path, bool isPNG) -> unsigned int {
     unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -141,20 +137,43 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char* data = stbi_load("/home/wumbo/dev/opengl-by-example/container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
     if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        if (isPNG) {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        } else {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        }
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
+    std::cout << path << " loaded\n";
+    return texture;
+}
+
+int main() {
+    initGLFW();
+    auto window = createWindow();
+    initGLAD();
+    setCallbackFunctions(window);
+
+    Shader shaderProgram("/home/wumbo/dev/opengl-by-example/shader.vs", "/home/wumbo/dev/opengl-by-example/shader.fs");
+    auto vao = createVAO();
+
+    stbi_set_flip_vertically_on_load(true);
+    unsigned int texture1 = createTexture("/home/wumbo/dev/opengl-by-example/container.jpg", false);
+    unsigned int texture2 = createTexture("/home/wumbo/dev/opengl-by-example/awesomeface.png", true);
+
+    shaderProgram.use(); // don't forget to activate the shader before setting uniforms!  
+    glUniform1i(glGetUniformLocation(shaderProgram.ID, "texture1"), 0); // set it manually
+    shaderProgram.setInt("texture2", 1); // or with shader class
 
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
         
-        shaderProgram.use();
-        render(shaderProgram, vao, texture);
+        render(shaderProgram, vao, texture1, texture2);
 
         // GLFW swap buffers and poll IO events
         glfwSwapBuffers(window);
