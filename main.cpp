@@ -14,6 +14,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 auto initGLFW() -> void {
@@ -56,20 +60,30 @@ auto createVAO() -> unsigned int {
         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        // -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
     };
-    
+
+    unsigned int indices[] = {  // note that we start from 0!
+        0, 1, 3,   // first triangle
+        1, 2, 3    // second triangle
+    };
+
     // Vertex Buffer object
     unsigned int VAO;
     unsigned int VBO;
+    unsigned int EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     // Bind Vertex Array Object
     glBindVertexArray(VAO);
     // Copy vertices array in a buffer for OpenGL to use
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -100,12 +114,11 @@ void render(Shader& shaderProgram, unsigned int vao, unsigned int texture) {
     int vertexColorLocation = glGetUniformLocation(shaderProgram.ID, "ourColor");
     glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
-    // // Draw triangle
+    // Draw square
     glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    // glBindTexture(GL_TEXTURE_2D, texture);
-    // glBindVertexArray(vao);
-    // glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 int main() {
@@ -126,9 +139,6 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-    // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
     int width, height, nrChannels;
     unsigned char* data = stbi_load("/home/wumbo/dev/opengl-by-example/container.jpg", &width, &height, &nrChannels, 0);
