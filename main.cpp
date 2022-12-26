@@ -4,6 +4,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "shaderclass.h"
 #include "temp.cpp"
 
@@ -105,22 +109,23 @@ void render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsi
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // be sure to activate the shader
-    glUseProgram(shaderProgram.ID);
-  
-    // // update the uniform color
-    float timeValue = glfwGetTime();
-    float greenValue = sin(timeValue) / 2.0f + 0.5f;
-    int vertexColorLocation = glGetUniformLocation(shaderProgram.ID, "ourColor");
-    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
-    // Draw square
-    glBindVertexArray(vao);
+    // bind textures on corresponding texture units
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, texture1);
     glActiveTexture(GL_TEXTURE1); // activate the texture unit first before binding texture
     glBindTexture(GL_TEXTURE_2D, texture2);
 
+    // create transformations
+    glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+    transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+    transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    shaderProgram.use();
+
+    unsigned int transformLoc = glGetUniformLocation(shaderProgram.ID, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+    // Draw square
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
@@ -166,8 +171,9 @@ int main() {
     unsigned int texture1 = createTexture("/home/wumbo/dev/opengl-by-example/container.jpg", false);
     unsigned int texture2 = createTexture("/home/wumbo/dev/opengl-by-example/awesomeface.png", true);
 
-    shaderProgram.use(); // don't forget to activate the shader before setting uniforms!  
-    glUniform1i(glGetUniformLocation(shaderProgram.ID, "texture1"), 0); // set it manually
+    // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
+    shaderProgram.use();
+    shaderProgram.setInt("texture1", 0); // set it manually
     shaderProgram.setInt("texture2", 1); // or with shader class
 
     while(!glfwWindowShouldClose(window)) {
