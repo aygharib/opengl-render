@@ -306,12 +306,12 @@ int main() {
     initGLAD();
     setCallbackFunctions(window);
 
-    Shader shaderProgram("/home/wumbo/dev/opengl-by-example/shader.vs", "/home/wumbo/dev/opengl-by-example/shader.fs");
+    Shader shaderProgram("/home/wumbo/dev/opengl-by-example/shaders/shader.vs", "/home/wumbo/dev/opengl-by-example/shaders/shader.fs");
     auto vao = createVAO();
 
     stbi_set_flip_vertically_on_load(true);
-    unsigned int texture1 = createTexture("/home/wumbo/dev/opengl-by-example/container.jpg", false);
-    unsigned int texture2 = createTexture("/home/wumbo/dev/opengl-by-example/awesomeface.png", true);
+    unsigned int texture1 = createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/container.jpg", false);
+    unsigned int texture2 = createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/awesomeface.png", true);
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     shaderProgram.use();
