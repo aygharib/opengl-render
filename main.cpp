@@ -149,9 +149,16 @@ void render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsi
     glBindTexture(GL_TEXTURE_2D, texture2);
 
     // create View matrix
+    const float radius = 10.0f;
+    float camX = sin(glfwGetTime()) * radius;
+    float camZ = cos(glfwGetTime()) * radius;
     glm::mat4 view = glm::mat4(1.0f);
-    // note that we're translating the scene in the reverse direction of where we want to move
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    // define view matrix as the LookAt matrix for camera movement
+    // view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), 
+    //         glm::vec3(0.0f, 0.0f, 0.0f), 
+    //         glm::vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+
     // create Projection matrix
     glm::mat4 projection;
     projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
