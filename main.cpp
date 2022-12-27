@@ -11,11 +11,56 @@
 #include "shaderclass.h"
 #include "temp.cpp"
 
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+
+float lastX = 400, lastY = 300;
+bool firstMouse = true;
+float pitch = 0.0f;
+float yaw = -90.0f;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window, glm::vec3& cameraPos, glm::vec3& cameraFront, glm::vec3& cameraUp, float deltaTime) {
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+  
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; 
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    /// Add the offset values to the camera's yaw and pitch values.
+    // add offset to global pitch and yaw
+    yaw   += xoffset;
+    pitch += yoffset;
+
+    /// Add some constraints to the minimum/maximum pitch values.
+    // constraint the pitch and yaw so users can not look further than straight up or down
+    if(pitch > 89.0f)
+        pitch = 89.0f;
+    if(pitch < -89.0f)
+        pitch = -89.0f;
+
+    /// Calculate the direction vector
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(direction);
+}  
+
+void processInput(GLFWwindow *window, float deltaTime) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
@@ -64,6 +109,12 @@ auto initGLAD() -> void {
 void setCallbackFunctions(GLFWwindow* window) {
     // Set callback function when resizing window
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // hide the cursor and capture it
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // Set mouse callback
+    glfwSetCursorPosCallback(window, mouse_callback);
 }
 
 auto createVAO() -> unsigned int {
@@ -147,7 +198,7 @@ auto createVAO() -> unsigned int {
     return VAO;
 }
 
-void render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsigned int texture2, glm::vec3& cameraPos, glm::vec3& cameraFront, glm::vec3& cameraUp) {
+void render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsigned int texture2) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     // clear depth buffer before each render to clear previous depth data (similar to clearing previous color buffer)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -254,21 +305,17 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
-
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
 
     while(!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;  
+        lastFrame = currentFrame;
 
-        processInput(window, cameraPos, cameraFront, cameraUp, deltaTime);
+        processInput(window, deltaTime);
         
-        render(shaderProgram, vao, texture1, texture2, cameraPos, cameraFront, cameraUp);
+        render(shaderProgram, vao, texture1, texture2);
 
         // GLFW swap buffers and poll IO events
         glfwSwapBuffers(window);
