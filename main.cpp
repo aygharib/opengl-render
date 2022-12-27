@@ -140,7 +140,8 @@ auto createVAO() -> unsigned int {
 void render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsigned int texture2) {
     // Render
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    // clear depth buffer before each render to clear previous depth data (similar to clearing previous color buffer)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // bind textures on corresponding texture units
     glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
@@ -220,6 +221,8 @@ int main() {
     shaderProgram.use();
     shaderProgram.setInt("texture1", 0); // set it manually
     shaderProgram.setInt("texture2", 1); // or with shader class
+
+    glEnable(GL_DEPTH_TEST);
 
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
