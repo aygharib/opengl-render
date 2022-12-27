@@ -20,6 +20,8 @@ bool firstMouse = true;
 float pitch = 0.0f;
 float yaw = -90.0f;
 
+float fov = 45.0f;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
@@ -58,7 +60,15 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     direction.y = sin(glm::radians(pitch));
     direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraFront = glm::normalize(direction);
-}  
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    fov -= (float)yoffset;
+    if (fov < 1.0f)
+        fov = 1.0f;
+    if (fov > 45.0f)
+        fov = 45.0f;
+}
 
 void processInput(GLFWwindow *window, float deltaTime) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -115,6 +125,9 @@ void setCallbackFunctions(GLFWwindow* window) {
 
     // Set mouse callback
     glfwSetCursorPosCallback(window, mouse_callback);
+
+    // Set scroll callback
+    glfwSetScrollCallback(window, scroll_callback); 
 }
 
 auto createVAO() -> unsigned int {
@@ -219,7 +232,7 @@ void render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsi
 
     // create Projection matrix
     glm::mat4 projection;
-    projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    projection = glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
     // send matrices to shader (this is usually done each frame since transformation matrices tend to change a lot)
     // int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
     // glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
