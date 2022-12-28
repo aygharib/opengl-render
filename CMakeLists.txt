@@ -20,5 +20,5 @@ add_definitions("-std=c++20")
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-add_executable(openglbyexample src/main.cpp src/shaderclass.cpp)
+add_executable(openglbyexample src/main.cpp)
 target_link_libraries(openglbyexample ${CONAN_LIBS})
