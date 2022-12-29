@@ -134,13 +134,20 @@ auto createShader() -> unsigned int {
 }
 
 auto createVAO() -> unsigned int {
-    // Triangle vertices in normalized device coordinates
+    // Vertices in normalized device coordinates
     // Vertex data to be sent to the vertex shader via a VBO
     float vertices[] = {
         // X, Y, Z positions
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
+        -0.5f, -0.5f, 0.0f, // bottom left
+         0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f,  0.5f, 0.0f,  // top left
+         0.5f,  0.5f, 0.0f,  // top right
+    };
+
+    // Indices for indexed drawing, to remove duplicated vertex data of overlapping vertices
+    unsigned int indices[] = {
+        0, 1, 2,
+        1, 2, 3
     };
 
     // Bind VAO before creation on VBO to store calls to
@@ -149,10 +156,16 @@ auto createVAO() -> unsigned int {
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    // Create and bind temporary VBO to GL_ARRAY_BUFFER buffer to train VAO
-    unsigned int tempVBO;
-    glGenBuffers(1, &tempVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, tempVBO);
+    // Create and bind EBO to GL_ELEMENT_ARRAY_BUFFER buffer
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Create and bind VBO to GL_ARRAY_BUFFER buffer
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     
     // Supply vertex data to whichever buffer is in GL_ARRAY_BUFFER
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -163,9 +176,6 @@ auto createVAO() -> unsigned int {
 
     // Unbind vertex array to prevent future VertexAttrib calls from modifying VAO
     glBindVertexArray(0);
-
-    // Remove temporary VBO
-    glDeleteBuffers(1, &tempVBO);
 
     return VAO;
 }
@@ -194,7 +204,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // Swap front and back GLFW color buffers after render commands are complete
         // so the image is displayed without still being rendered to, to remove any
