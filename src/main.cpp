@@ -270,7 +270,7 @@ int main() {
 
     stbi_set_flip_vertically_on_load(true);
     unsigned int texture1 = createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/container.jpg", false);
-    unsigned int texture2 = createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/awesomeface.png", true);
+    unsigned int texture2 = createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/grunge-scratch.png", true);
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     shaderProgram.use();
