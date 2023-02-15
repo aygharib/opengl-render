@@ -28,7 +28,7 @@ namespace {
         glm::vec3(1.3F, -2.0F, -2.5F),  glm::vec3(1.5F, 2.0F, -2.5F),
         glm::vec3(1.5F, 0.2F, -1.5F),   glm::vec3(-1.3F, 1.0F, -1.5F)};
 
-    auto framebuffer_size_callback(GLFWwindow *window, int width, int height) -> void {
+    auto framebuffer_size_callback(GLFWwindow* window, int width, int height) -> void {
         glViewport(0, 0, width, height);
     }
 
@@ -39,19 +39,19 @@ namespace {
             firstMouse = false;
         }
     
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; 
+        const auto xoffset{xpos - lastX};
+        const auto yoffset{lastY - ypos}; 
         lastX = xpos;
         lastY = ypos;
 
-        camera.ProcessMouseMovement(xoffset, yoffset);
+        camera.processMouseMovement(xoffset, yoffset);
     }
 
     auto scroll_callback(GLFWwindow* window, double xoffset, double yoffset) -> void {
-        camera.ProcessMouseScroll(static_cast<float>(yoffset));
+        camera.processMouseScroll(static_cast<float>(yoffset));
     }
 
-    auto processInput(GLFWwindow *window, float deltaTime) -> void {
+    auto processInput(GLFWwindow* window, float deltaTime) -> void {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, 1);
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
@@ -60,13 +60,13 @@ namespace {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            camera.ProcessKeyboard(FORWARD, deltaTime);
+            camera.processKeyboard(FORWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            camera.ProcessKeyboard(BACKWARD, deltaTime);
+            camera.processKeyboard(BACKWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            camera.ProcessKeyboard(LEFT, deltaTime);
+            camera.processKeyboard(LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            camera.ProcessKeyboard(RIGHT, deltaTime);
+            camera.processKeyboard(RIGHT, deltaTime);
     }
 
     auto initGLFW() -> void {
@@ -180,7 +180,7 @@ namespace {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
         // position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), nullptr);
         glEnableVertexAttribArray(0);
 
         // texture attribute
@@ -204,7 +204,7 @@ namespace {
         shaderProgram.use();
 
         // create View matrix
-        auto view{camera.GetViewMatrix()};
+        auto view{camera.getViewMatrix()};
 
         // create Projection matrix
         auto projection{glm::perspective(glm::radians(camera.Zoom), 800.0F / 600.0F, 0.1F, 100.0F)};
@@ -215,11 +215,11 @@ namespace {
 
         // Draw square
         glBindVertexArray(vao);
-        for(unsigned int i = 0; i < 10; i++) {
+        for (auto i{0}; i < 10; i++) {
             // create Model matrix
             auto model{glm::mat4(1.0F)};
             model = glm::translate(model, cubePositions[i]);
-            float angle{20.0F * i}; 
+            const float angle{20.0F * static_cast<float>(i)}; 
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0F, 0.3F, 0.5F));
             shaderProgram.setMat4("model", model);
 
@@ -268,8 +268,8 @@ auto main() -> int {
     auto vao{createVAO()};
 
     stbi_set_flip_vertically_on_load(1);
-    unsigned int texture1{createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/container.jpg", false)};
-    unsigned int texture2{createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/grunge-scratch.png", true)};
+    const auto texture1{createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/container.jpg", false)};
+    const auto texture2{createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/grunge-scratch.png", true)};
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     shaderProgram.use();
