@@ -60,13 +60,13 @@ namespace {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            camera.processKeyboard(FORWARD, deltaTime);
+            camera.processKeyboard(Camera_Movement::FORWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            camera.processKeyboard(BACKWARD, deltaTime);
+            camera.processKeyboard(Camera_Movement::BACKWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            camera.processKeyboard(LEFT, deltaTime);
+            camera.processKeyboard(Camera_Movement::LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            camera.processKeyboard(RIGHT, deltaTime);
+            camera.processKeyboard(Camera_Movement::RIGHT, deltaTime);
     }
 
     auto initGLFW() -> void {
