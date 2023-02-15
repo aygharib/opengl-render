@@ -34,9 +34,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     const auto* fShaderCode = fragmentCode.c_str();
 
     // 2. compile shaders
-    unsigned int vertex{0};
-    unsigned int fragment{0};
-    int success{0};
+    auto vertex{0};
+    auto fragment{0};
+    auto success{0};
     char infoLog[512];
     
     // vertex Shader

@@ -19,14 +19,14 @@ namespace {
     float lastX{400};
     float lastY{300};
     bool firstMouse{true};
-    Camera camera{glm::vec3{0.0F, 0.0F, 3.0F}};
+    Camera camera{glm::vec3{0.F, 0.F, 3.F}};
 
     glm::vec3 cubePositions[] = {
-        glm::vec3(0.0F, 0.0F, 0.0F),    glm::vec3(2.0F, 5.0F, -15.0F),
-        glm::vec3(-1.5F, -2.2F, -2.5F), glm::vec3(-3.8F, -2.0F, -12.3F),
-        glm::vec3(2.4F, -0.4F, -3.5F),  glm::vec3(-1.7F, 3.0F, -7.5F),
-        glm::vec3(1.3F, -2.0F, -2.5F),  glm::vec3(1.5F, 2.0F, -2.5F),
-        glm::vec3(1.5F, 0.2F, -1.5F),   glm::vec3(-1.3F, 1.0F, -1.5F)};
+        glm::vec3(0.F, 0.F, 0.F),    glm::vec3(2.F, 5.F, -15.F),
+        glm::vec3(-1.5F, -2.2F, -2.5F), glm::vec3(-3.8F, -2.F, -12.3F),
+        glm::vec3(2.4F, -0.4F, -3.5F),  glm::vec3(-1.7F, 3.F, -7.5F),
+        glm::vec3(1.3F, -2.F, -2.5F),  glm::vec3(1.5F, 2.F, -2.5F),
+        glm::vec3(1.5F, 0.2F, -1.5F),   glm::vec3(-1.3F, 1.F, -1.5F)};
 
     auto framebuffer_size_callback(GLFWwindow* window, int width, int height) -> void {
         glViewport(0, 0, width, height);
@@ -114,47 +114,47 @@ namespace {
         // Input vertices data
         float vertices[] = {
             // position           // texture
-            -0.5F, -0.5F, -0.5F,  0.0F, 0.0F,
-             0.5F, -0.5F, -0.5F,  1.0F, 0.0F,
-             0.5F,  0.5F, -0.5F,  1.0F, 1.0F,
-             0.5F,  0.5F, -0.5F,  1.0F, 1.0F,
-            -0.5F,  0.5F, -0.5F,  0.0F, 1.0F,
-            -0.5F, -0.5F, -0.5F,  0.0F, 0.0F,
+            -0.5F, -0.5F, -0.5F,  0.F, 0.F,
+             0.5F, -0.5F, -0.5F,  1.F, 0.F,
+             0.5F,  0.5F, -0.5F,  1.F, 1.F,
+             0.5F,  0.5F, -0.5F,  1.F, 1.F,
+            -0.5F,  0.5F, -0.5F,  0.F, 1.F,
+            -0.5F, -0.5F, -0.5F,  0.F, 0.F,
 
-            -0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
-             0.5F, -0.5F,  0.5F,  1.0F, 0.0F,
-             0.5F,  0.5F,  0.5F,  1.0F, 1.0F,
-             0.5F,  0.5F,  0.5F,  1.0F, 1.0F,
-            -0.5F,  0.5F,  0.5F,  0.0F, 1.0F,
-            -0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
+            -0.5F, -0.5F,  0.5F,  0.F, 0.F,
+             0.5F, -0.5F,  0.5F,  1.F, 0.F,
+             0.5F,  0.5F,  0.5F,  1.F, 1.F,
+             0.5F,  0.5F,  0.5F,  1.F, 1.F,
+            -0.5F,  0.5F,  0.5F,  0.F, 1.F,
+            -0.5F, -0.5F,  0.5F,  0.F, 0.F,
 
-            -0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
-            -0.5F,  0.5F, -0.5F,  1.0F, 1.0F,
-            -0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-            -0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-            -0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
-            -0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
+            -0.5F,  0.5F,  0.5F,  1.F, 0.F,
+            -0.5F,  0.5F, -0.5F,  1.F, 1.F,
+            -0.5F, -0.5F, -0.5F,  0.F, 1.F,
+            -0.5F, -0.5F, -0.5F,  0.F, 1.F,
+            -0.5F, -0.5F,  0.5F,  0.F, 0.F,
+            -0.5F,  0.5F,  0.5F,  1.F, 0.F,
 
-             0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
-             0.5F,  0.5F, -0.5F,  1.0F, 1.0F,
-             0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-             0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-             0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
-             0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
+             0.5F,  0.5F,  0.5F,  1.F, 0.F,
+             0.5F,  0.5F, -0.5F,  1.F, 1.F,
+             0.5F, -0.5F, -0.5F,  0.F, 1.F,
+             0.5F, -0.5F, -0.5F,  0.F, 1.F,
+             0.5F, -0.5F,  0.5F,  0.F, 0.F,
+             0.5F,  0.5F,  0.5F,  1.F, 0.F,
 
-            -0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
-             0.5F, -0.5F, -0.5F,  1.0F, 1.0F,
-             0.5F, -0.5F,  0.5F,  1.0F, 0.0F,
-             0.5F, -0.5F,  0.5F,  1.0F, 0.0F,
-            -0.5F, -0.5F,  0.5F,  0.0F, 0.0F,
-            -0.5F, -0.5F, -0.5F,  0.0F, 1.0F,
+            -0.5F, -0.5F, -0.5F,  0.F, 1.F,
+             0.5F, -0.5F, -0.5F,  1.F, 1.F,
+             0.5F, -0.5F,  0.5F,  1.F, 0.F,
+             0.5F, -0.5F,  0.5F,  1.F, 0.F,
+            -0.5F, -0.5F,  0.5F,  0.F, 0.F,
+            -0.5F, -0.5F, -0.5F,  0.F, 1.F,
 
-            -0.5F,  0.5F, -0.5F,  0.0F, 1.0F,
-             0.5F,  0.5F, -0.5F,  1.0F, 1.0F,
-             0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
-             0.5F,  0.5F,  0.5F,  1.0F, 0.0F,
-            -0.5F,  0.5F,  0.5F,  0.0F, 0.0F,
-            -0.5F,  0.5F, -0.5F,  0.0F, 1.0F
+            -0.5F,  0.5F, -0.5F,  0.F, 1.F,
+             0.5F,  0.5F, -0.5F,  1.F, 1.F,
+             0.5F,  0.5F,  0.5F,  1.F, 0.F,
+             0.5F,  0.5F,  0.5F,  1.F, 0.F,
+            -0.5F,  0.5F,  0.5F,  0.F, 0.F,
+            -0.5F,  0.5F, -0.5F,  0.F, 1.F
         };
 
         unsigned int indices[] = {  // note that we start from 0!
@@ -191,7 +191,7 @@ namespace {
     }
 
     auto render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsigned int texture2) -> void {
-        glClearColor(0.2F, 0.3F, 0.3F, 1.0F);
+        glClearColor(0.2F, 0.3F, 0.3F, 1.F);
         // clear depth buffer before each render to clear previous depth data (similar to clearing previous color buffer)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -207,7 +207,7 @@ namespace {
         auto view{camera.getViewMatrix()};
 
         // create Projection matrix
-        auto projection{glm::perspective(glm::radians(camera.Zoom), 800.0F / 600.0F, 0.1F, 100.0F)};
+        auto projection{glm::perspective(glm::radians(camera.getZoom()), 800.F / 600.F, 0.1F, 100.F)};
 
         /// Send matrices to shader (this is usually done each frame since transformation matrices tend to change a lot)
         shaderProgram.setMat4("view", view);
@@ -217,10 +217,10 @@ namespace {
         glBindVertexArray(vao);
         for (auto i{0}; i < 10; i++) {
             // create Model matrix
-            auto model{glm::mat4(1.0F)};
+            auto model{glm::mat4(1.F)};
             model = glm::translate(model, cubePositions[i]);
-            const float angle{20.0F * static_cast<float>(i)}; 
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0F, 0.3F, 0.5F));
+            const float angle{20.F * static_cast<float>(i)}; 
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.F, 0.3F, 0.5F));
             shaderProgram.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -256,7 +256,7 @@ namespace {
         std::cout << path << " loaded\n";
         return texture;
     }
-    } // namespace
+} // namespace
 
 auto main() -> int {
     initGLFW();
@@ -278,8 +278,8 @@ auto main() -> int {
 
     glEnable(GL_DEPTH_TEST);
 
-    float deltaTime{0.0F}; // Time between current frame and last frame
-    float lastFrame{0.0F}; // Time of last frame
+    float deltaTime{0.F}; // Time between current frame and last frame
+    float lastFrame{0.F}; // Time of last frame
 
     while(glfwWindowShouldClose(window) == 0) {
         auto currentFrame = static_cast<float>(glfwGetTime());
