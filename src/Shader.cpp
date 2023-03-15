@@ -1,5 +1,6 @@
 #include "Shader.h"
 
+#include <fmt/core.h>
 #include <filesystem>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
@@ -26,9 +27,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
         // convert stream into string
         vertexCode   = vShaderStream.str();
         fragmentCode = fShaderStream.str();
-    } catch (std::ifstream::failure e) {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-    }
+    } catch (std::ifstream::failure e) { fmt::print("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ\n"); }
     const auto* vShaderCode = vertexCode.c_str();
     const auto* fShaderCode = fragmentCode.c_str();
 
@@ -46,7 +45,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
     if (success == 0) {
         glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        fmt::print("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n {} \n", infoLog);
     }
 
     // similiar for Fragment Shader
@@ -57,7 +56,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
     if (success == 0) {
         glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        fmt::print("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n {} \n", infoLog);
     }
 
     // shader Program
@@ -69,7 +68,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     glGetProgramiv(ID, GL_LINK_STATUS, &success);
     if (success == 0) {
         glGetProgramInfoLog(ID, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+        fmt::print("ERROR::SHADER::PROGRAM::LINKING_FAILED\n {} \n", infoLog);
     }
 
     // delete the shaders as they're linked into our program now and no longer necessary

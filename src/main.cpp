@@ -6,6 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include <fmt/core.h>
 #include <array>
 #include <cmath>
 #include <glm/glm.hpp>
@@ -82,7 +83,7 @@ auto init_GLFW() -> void {
 auto create_window() -> GLFWwindow* {
     auto* window = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
     if (window == nullptr) {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        fmt::print("Failed to create GLFW window\n");
         glfwTerminate();
     }
     glfwMakeContextCurrent(window);
@@ -93,7 +94,7 @@ auto create_window() -> GLFWwindow* {
 // Initialize GLAD before OpenGL functions
 auto init_GLAD() -> void {
     if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+        fmt::print("Failed to initialize GLAD\n");
     }
 }
 
@@ -237,10 +238,10 @@ auto create_texture(const char* path, bool is_PNG) -> unsigned int {
         }
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-        std::cout << "Failed to load texture" << std::endl;
+        fmt::print("Failed to load texture\n");
     }
     stbi_image_free(static_cast<void*>(data));
-    std::cout << path << " loaded\n";
+    fmt::print("{} loaded\n", path);
     return texture;
 }
 }  // namespace
