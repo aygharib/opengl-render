@@ -31,9 +31,8 @@ auto cube_positions = std::array<glm::vec3, 10>{glm::vec3{0.F, 0.F, 0.F},
                                                 glm::vec3{-1.3F, 1.F, -1.5F}};
 
 namespace {
-auto last_mouse_x = 400.F;
-auto last_mouse_y = 300.F;
-auto first_mouse  = true;
+auto last_mouse_x = 400.;
+auto last_mouse_y = 300.;
 auto camera       = Camera{glm::vec3{0.F, 0.F, 3.F}};
 
 auto framebuffer_size_callback(GLFWwindow* /*window*/, int width, int height) -> void {
@@ -41,16 +40,10 @@ auto framebuffer_size_callback(GLFWwindow* /*window*/, int width, int height) ->
 }
 
 auto mouse_callback(GLFWwindow* /*window*/, double xpos, double ypos) -> void {
-    if (first_mouse) {
-        last_mouse_x = static_cast<float>(xpos);
-        last_mouse_y = static_cast<float>(ypos);
-        first_mouse  = false;
-    }
-
     const auto xoffset = xpos - last_mouse_x;
     const auto yoffset = last_mouse_y - ypos;
-    last_mouse_x       = static_cast<float>(xpos);
-    last_mouse_y       = static_cast<float>(ypos);
+    last_mouse_x       = xpos;
+    last_mouse_y       = ypos;
 
     camera.process_mouse_movement(xoffset, yoffset);
 }
