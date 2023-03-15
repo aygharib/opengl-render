@@ -1,5 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include <glad/glad.h>  // include glad to get all the required OpenGL headers
 #include <glm/glm.hpp>
@@ -25,5 +24,3 @@ class Shader {
     auto setFloat(const std::string& name, float value) const -> void;
     auto setMat4(const std::string& name, const glm::mat4& mat) const -> void;
 };
-
-#endif
