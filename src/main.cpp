@@ -93,6 +93,7 @@ auto create_window() -> GLFWwindow* {
 
 // Initialize GLAD before OpenGL functions
 auto init_GLAD() -> void {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-cstyle-cast)
     if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
         fmt::print("Failed to initialize GLAD\n");
     }
@@ -166,6 +167,7 @@ auto create_VAO() -> unsigned int {
     glEnableVertexAttribArray(0);
 
     // texture attribute
+    // NOLINTNEXTLINE(performance-no-int-to-ptr, cppcoreguidelines-pro-type-cstyle-cast)
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
