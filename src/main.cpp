@@ -252,15 +252,12 @@ auto main() -> int {
     init_GLAD();
     set_callback_functions(window);
 
-    auto shader_program = Shader{"/home/wumbo/dev/opengl-by-example/shaders/shader.vs",
-                                 "/home/wumbo/dev/opengl-by-example/shaders/shader.fs"};
+    auto shader_program = Shader{"./shaders/shader.vs", "./shaders/shader.fs"};
     auto VAO            = create_VAO();
 
     stbi_set_flip_vertically_on_load(1);
-    const auto texture1 =
-      create_texture("/home/wumbo/dev/opengl-by-example/resources/textures/container.jpg", false);
-    const auto texture2 = create_texture(
-      "/home/wumbo/dev/opengl-by-example/resources/textures/grunge-scratch.png", true);
+    const auto texture1 = create_texture("./resources/textures/container.jpg", false);
+    const auto texture2 = create_texture("./resources/textures/grunge-scratch.png", true);
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
     shader_program.use();
