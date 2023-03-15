@@ -272,15 +272,15 @@ auto main() -> int {
 
     glEnable(GL_DEPTH_TEST);
 
-    auto delta_time = 0.F;  // Time between current frame and last frame
-    auto last_frame = 0.F;  // Time of last frame
+    auto delta_time = 0.;  // Time between current frame and last frame
+    auto last_frame = 0.;  // Time of last frame
 
     while (glfwWindowShouldClose(window) == 0) {
-        auto currentFrame = static_cast<float>(glfwGetTime());
+        auto currentFrame = glfwGetTime();
         delta_time        = currentFrame - last_frame;
         last_frame        = currentFrame;
 
-        process_input(window, delta_time);
+        process_input(window, static_cast<float>(delta_time));
 
         render(shader_program, VAO, texture1, texture2);
 
