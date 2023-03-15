@@ -18,7 +18,7 @@ class Camera {
     glm::vec3 up{0.F, 0.F, -1.F};
     glm::vec3 front{0.F, 0.F, -1.F};
     glm::vec3 right{0.F, 0.F, 0.F};
-    glm::vec3 position;
+    glm::vec3 position{0.F, 0.F, 0.F};
 
     // world attributes
     glm::vec3 worldUp{0.F, 1.F, 0.F};
