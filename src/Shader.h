@@ -19,8 +19,8 @@ class Shader {
     // use/activate the shader
     auto use() const -> void;
     // utility uniform functions
-    auto setBool(const std::string& name, bool value) const -> void;
-    auto setInt(const std::string& name, int value) const -> void;
-    auto setFloat(const std::string& name, float value) const -> void;
-    auto setMat4(const std::string& name, const glm::mat4& mat) const -> void;
+    auto set_bool(const std::string& name, bool value) const -> void;
+    auto set_int(const std::string& name, int value) const -> void;
+    auto set_float(const std::string& name, float value) const -> void;
+    auto set_mat4(const std::string& name, const glm::mat4& mat) const -> void;
 };

@@ -17,61 +17,61 @@
 #include "Shader.h"
 
 namespace {
-float lastX{400};
-float lastY{300};
-bool firstMouse{true};
+float last_mouse_x{400};
+float last_mouse_y{300};
+bool first_mouse{true};
 Camera camera{glm::vec3{0.F, 0.F, 3.F}};
 
-glm::vec3 cubePositions[] = {glm::vec3(0.F, 0.F, 0.F),
-                             glm::vec3(2.F, 5.F, -15.F),
-                             glm::vec3(-1.5F, -2.2F, -2.5F),
-                             glm::vec3(-3.8F, -2.F, -12.3F),
-                             glm::vec3(2.4F, -0.4F, -3.5F),
-                             glm::vec3(-1.7F, 3.F, -7.5F),
-                             glm::vec3(1.3F, -2.F, -2.5F),
-                             glm::vec3(1.5F, 2.F, -2.5F),
-                             glm::vec3(1.5F, 0.2F, -1.5F),
-                             glm::vec3(-1.3F, 1.F, -1.5F)};
+glm::vec3 cube_positions[] = {glm::vec3(0.F, 0.F, 0.F),
+                              glm::vec3(2.F, 5.F, -15.F),
+                              glm::vec3(-1.5F, -2.2F, -2.5F),
+                              glm::vec3(-3.8F, -2.F, -12.3F),
+                              glm::vec3(2.4F, -0.4F, -3.5F),
+                              glm::vec3(-1.7F, 3.F, -7.5F),
+                              glm::vec3(1.3F, -2.F, -2.5F),
+                              glm::vec3(1.5F, 2.F, -2.5F),
+                              glm::vec3(1.5F, 0.2F, -1.5F),
+                              glm::vec3(-1.3F, 1.F, -1.5F)};
 
 auto framebuffer_size_callback(GLFWwindow* window, int width, int height) -> void {
     glViewport(0, 0, width, height);
 }
 
 auto mouse_callback(GLFWwindow* window, double xpos, double ypos) -> void {
-    if (firstMouse) {
-        lastX      = xpos;
-        lastY      = ypos;
-        firstMouse = false;
+    if (first_mouse) {
+        last_mouse_x = xpos;
+        last_mouse_y = ypos;
+        first_mouse  = false;
     }
 
-    const auto xoffset{xpos - lastX};
-    const auto yoffset{lastY - ypos};
-    lastX = xpos;
-    lastY = ypos;
+    const auto xoffset{xpos - last_mouse_x};
+    const auto yoffset{last_mouse_y - ypos};
+    last_mouse_x = xpos;
+    last_mouse_y = ypos;
 
-    camera.processMouseMovement(xoffset, yoffset);
+    camera.process_mouse_movement(xoffset, yoffset);
 }
 
 auto scroll_callback(GLFWwindow* window, double xoffset, double yoffset) -> void {
-    camera.processMouseScroll(static_cast<float>(yoffset));
+    camera.process_mouse_scroll(static_cast<float>(yoffset));
 }
 
-auto processInput(GLFWwindow* window, float deltaTime) -> void {
+auto process_input(GLFWwindow* window, float deltaTime) -> void {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, 1);
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.processKeyboard(Camera_Movement::FORWARD, deltaTime);
+        camera.process_keyboard(Camera_Movement::FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.processKeyboard(Camera_Movement::BACKWARD, deltaTime);
+        camera.process_keyboard(Camera_Movement::BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.processKeyboard(Camera_Movement::LEFT, deltaTime);
+        camera.process_keyboard(Camera_Movement::LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.processKeyboard(Camera_Movement::RIGHT, deltaTime);
+        camera.process_keyboard(Camera_Movement::RIGHT, deltaTime);
 }
 
-auto initGLFW() -> void {
+auto init_GLFW() -> void {
     // Initialize GLFW, set core-profile and OpenGL version
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -80,7 +80,7 @@ auto initGLFW() -> void {
 }
 
 // Create GLFW window and set it as current context
-auto createWindow() -> GLFWwindow* {
+auto create_window() -> GLFWwindow* {
     GLFWwindow* window{glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr)};
     if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -92,13 +92,13 @@ auto createWindow() -> GLFWwindow* {
 }
 
 // Initialize GLAD before OpenGL functions
-auto initGLAD() -> void {
+auto init_GLAD() -> void {
     if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 }
 
-auto setCallbackFunctions(GLFWwindow* window) -> void {
+auto set_callback_functions(GLFWwindow* window) -> void {
     // Set callback function when resizing window
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -112,7 +112,7 @@ auto setCallbackFunctions(GLFWwindow* window) -> void {
     glfwSetScrollCallback(window, scroll_callback);
 }
 
-auto createVAO() -> unsigned int {
+auto create_VAO() -> unsigned int {
     // Input vertices data
     float vertices[] = {
       // position           // texture
@@ -188,31 +188,31 @@ auto render(Shader& shaderProgram, unsigned int vao, unsigned int texture1, unsi
     shaderProgram.use();
 
     // create View matrix
-    auto view{camera.getViewMatrix()};
+    auto view{camera.get_view_matrix()};
 
     // create Projection matrix
-    auto projection{glm::perspective(glm::radians(camera.getZoom()), 800.F / 600.F, 0.1F, 100.F)};
+    auto projection{glm::perspective(glm::radians(camera.get_zoom()), 800.F / 600.F, 0.1F, 100.F)};
 
     /// Send matrices to shader (this is usually done each frame since transformation matrices tend
     /// to change a lot)
-    shaderProgram.setMat4("view", view);
-    shaderProgram.setMat4("projection", projection);
+    shaderProgram.set_mat4("view", view);
+    shaderProgram.set_mat4("projection", projection);
 
     // Draw square
     glBindVertexArray(vao);
     for (auto i{0}; i < 10; i++) {
         // create Model matrix
         auto model{glm::mat4(1.F)};
-        model = glm::translate(model, cubePositions[i]);
+        model = glm::translate(model, cube_positions[i]);
         const float angle{20.F * static_cast<float>(i)};
         model = glm::rotate(model, glm::radians(angle), glm::vec3(1.F, 0.3F, 0.5F));
-        shaderProgram.setMat4("model", model);
+        shaderProgram.set_mat4("model", model);
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 }
 
-auto createTexture(const char* path, bool isPNG) -> unsigned int {
+auto create_texture(const char* path, bool isPNG) -> unsigned int {
     unsigned int texture{0};
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -246,39 +246,39 @@ auto createTexture(const char* path, bool isPNG) -> unsigned int {
 }  // namespace
 
 auto main() -> int {
-    initGLFW();
-    auto* window = createWindow();
-    initGLAD();
-    setCallbackFunctions(window);
+    init_GLFW();
+    auto* window = create_window();
+    init_GLAD();
+    set_callback_functions(window);
 
-    Shader shaderProgram("/home/wumbo/dev/opengl-by-example/shaders/shader.vs",
-                         "/home/wumbo/dev/opengl-by-example/shaders/shader.fs");
-    auto vao{createVAO()};
+    Shader shader_program("/home/wumbo/dev/opengl-by-example/shaders/shader.vs",
+                          "/home/wumbo/dev/opengl-by-example/shaders/shader.fs");
+    auto VAO{create_VAO()};
 
     stbi_set_flip_vertically_on_load(1);
     const auto texture1{
-      createTexture("/home/wumbo/dev/opengl-by-example/resources/textures/container.jpg", false)};
-    const auto texture2{createTexture(
+      create_texture("/home/wumbo/dev/opengl-by-example/resources/textures/container.jpg", false)};
+    const auto texture2{create_texture(
       "/home/wumbo/dev/opengl-by-example/resources/textures/grunge-scratch.png", true)};
 
     // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-    shaderProgram.use();
-    shaderProgram.setInt("texture1", 0);  // set it manually
-    shaderProgram.setInt("texture2", 1);  // or with shader class
+    shader_program.use();
+    shader_program.set_int("texture1", 0);  // set it manually
+    shader_program.set_int("texture2", 1);  // or with shader class
 
     glEnable(GL_DEPTH_TEST);
 
-    float deltaTime{0.F};  // Time between current frame and last frame
-    float lastFrame{0.F};  // Time of last frame
+    float delta_time{0.F};  // Time between current frame and last frame
+    float last_frame{0.F};  // Time of last frame
 
     while (glfwWindowShouldClose(window) == 0) {
         auto currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime         = currentFrame - lastFrame;
-        lastFrame         = currentFrame;
+        delta_time        = currentFrame - last_frame;
+        last_frame        = currentFrame;
 
-        processInput(window, deltaTime);
+        process_input(window, delta_time);
 
-        render(shaderProgram, vao, texture1, texture2);
+        render(shader_program, VAO, texture1, texture2);
 
         // GLFW swap buffers and poll IO events
         glfwSwapBuffers(window);

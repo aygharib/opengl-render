@@ -79,18 +79,18 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 
 auto Shader::use() const -> void { glUseProgram(ID); }
 
-auto Shader::setBool(const std::string& name, bool value) const -> void {
+auto Shader::set_bool(const std::string& name, bool value) const -> void {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 }
 
-auto Shader::setInt(const std::string& name, int value) const -> void {
+auto Shader::set_int(const std::string& name, int value) const -> void {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-auto Shader::setFloat(const std::string& name, float value) const -> void {
+auto Shader::set_float(const std::string& name, float value) const -> void {
     glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-auto Shader::setMat4(const std::string& name, const glm::mat4& mat) const -> void {
+auto Shader::set_mat4(const std::string& name, const glm::mat4& mat) const -> void {
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }

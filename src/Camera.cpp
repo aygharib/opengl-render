@@ -1,21 +1,21 @@
 #include "Camera.h"
 
-Camera::Camera(glm::vec3 position) : position(position) { updateCameraVectors(); }
+Camera::Camera(glm::vec3 position) : position(position) { update_camera_vectors(); }
 
-auto Camera::getViewMatrix() -> glm::mat4 { return glm::lookAt(position, position + front, up); }
+auto Camera::get_view_matrix() -> glm::mat4 { return glm::lookAt(position, position + front, up); }
 
-auto Camera::processKeyboard(Camera_Movement direction, float deltaTime) -> void {
-    float velocity = movementSpeed * deltaTime;
+auto Camera::process_keyboard(Camera_Movement direction, float deltaTime) -> void {
+    float velocity = movement_speed * deltaTime;
     if (direction == Camera_Movement::FORWARD) position += front * velocity;
     if (direction == Camera_Movement::BACKWARD) position -= front * velocity;
     if (direction == Camera_Movement::LEFT) position -= right * velocity;
     if (direction == Camera_Movement::RIGHT) position += right * velocity;
 }
 
-auto Camera::processMouseMovement(double xoffset, double yoffset, GLboolean constrainPitch)
+auto Camera::process_mouse_movement(double xoffset, double yoffset, GLboolean constrainPitch)
   -> void {
-    xoffset *= mouseSensitivity;
-    yoffset *= mouseSensitivity;
+    xoffset *= mouse_sensitivity;
+    yoffset *= mouse_sensitivity;
 
     yaw += xoffset;
     pitch += yoffset;
@@ -27,18 +27,18 @@ auto Camera::processMouseMovement(double xoffset, double yoffset, GLboolean cons
     }
 
     // update front, right and up Vectors using the updated Euler angles
-    updateCameraVectors();
+    update_camera_vectors();
 }
 
-auto Camera::processMouseScroll(float yoffset) -> void {
+auto Camera::process_mouse_scroll(float yoffset) -> void {
     zoom -= yoffset;
     if (zoom < 1.F) zoom = 1.F;
     if (zoom > 45.F) zoom = 45.F;
 }
 
-auto Camera::getZoom() const -> float { return zoom; }
+auto Camera::get_zoom() const -> float { return zoom; }
 
-auto Camera::updateCameraVectors() -> void {
+auto Camera::update_camera_vectors() -> void {
     // calculate the new front vector
     glm::vec3 newFront;
     newFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
