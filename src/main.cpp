@@ -19,6 +19,10 @@
 #include "Camera.h"
 #include "Shader.h"
 
+namespace {
+auto last_mouse_x   = 400.;
+auto last_mouse_y   = 300.;
+auto camera         = Camera{glm::vec3{0.F, 0.F, 3.F}};
 auto cube_positions = std::array<glm::vec3, 10>{glm::vec3{0.F, 0.F, 0.F},
                                                 glm::vec3{2.F, 5.F, -15.F},
                                                 glm::vec3{-1.5F, -2.2F, -2.5F},
@@ -29,11 +33,6 @@ auto cube_positions = std::array<glm::vec3, 10>{glm::vec3{0.F, 0.F, 0.F},
                                                 glm::vec3{1.5F, 2.F, -2.5F},
                                                 glm::vec3{1.5F, 0.2F, -1.5F},
                                                 glm::vec3{-1.3F, 1.F, -1.5F}};
-
-namespace {
-auto last_mouse_x = 400.;
-auto last_mouse_y = 300.;
-auto camera       = Camera{glm::vec3{0.F, 0.F, 3.F}};
 
 auto framebuffer_size_callback(GLFWwindow* /*window*/, int width, int height) -> void {
     glViewport(0, 0, width, height);
