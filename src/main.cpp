@@ -7,31 +7,34 @@
 #include "stb_image.h"
 
 #include <fmt/core.h>
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <utility>
+#include <vector>
 #include "Camera.h"
 #include "Shader.h"
+
+auto cube_positions = std::array<glm::vec3, 10>{glm::vec3{0.F, 0.F, 0.F},
+                                                glm::vec3{2.F, 5.F, -15.F},
+                                                glm::vec3{-1.5F, -2.2F, -2.5F},
+                                                glm::vec3{-3.8F, -2.F, -12.3F},
+                                                glm::vec3{2.4F, -0.4F, -3.5F},
+                                                glm::vec3{-1.7F, 3.F, -7.5F},
+                                                glm::vec3{1.3F, -2.F, -2.5F},
+                                                glm::vec3{1.5F, 2.F, -2.5F},
+                                                glm::vec3{1.5F, 0.2F, -1.5F},
+                                                glm::vec3{-1.3F, 1.F, -1.5F}};
 
 namespace {
 auto last_mouse_x = 400.F;
 auto last_mouse_y = 300.F;
 auto first_mouse  = true;
 auto camera       = Camera{glm::vec3{0.F, 0.F, 3.F}};
-
-glm::vec3 cube_positions[] = {glm::vec3(0.F, 0.F, 0.F),
-                              glm::vec3(2.F, 5.F, -15.F),
-                              glm::vec3(-1.5F, -2.2F, -2.5F),
-                              glm::vec3(-3.8F, -2.F, -12.3F),
-                              glm::vec3(2.4F, -0.4F, -3.5F),
-                              glm::vec3(-1.7F, 3.F, -7.5F),
-                              glm::vec3(1.3F, -2.F, -2.5F),
-                              glm::vec3(1.5F, 2.F, -2.5F),
-                              glm::vec3(1.5F, 0.2F, -1.5F),
-                              glm::vec3(-1.3F, 1.F, -1.5F)};
 
 auto framebuffer_size_callback(GLFWwindow* /*window*/, int width, int height) -> void {
     glViewport(0, 0, width, height);
@@ -115,7 +118,7 @@ auto set_callback_functions(GLFWwindow* window) -> void {
 
 auto create_VAO() -> unsigned int {
     // First 3 are position, next 3 are texture, for each vertex
-    std::array<float, 180> vertices = {
+    auto vertices = std::array<float, 180>{
       -0.5F, -0.5F, -0.5F, 0.F, 0.F, 0.5F,  -0.5F, -0.5F, 1.F, 0.F, 0.5F,  0.5F,  -0.5F, 1.F, 1.F,
       0.5F,  0.5F,  -0.5F, 1.F, 1.F, -0.5F, 0.5F,  -0.5F, 0.F, 1.F, -0.5F, -0.5F, -0.5F, 0.F, 0.F,
 
@@ -134,14 +137,14 @@ auto create_VAO() -> unsigned int {
       -0.5F, 0.5F,  -0.5F, 0.F, 1.F, 0.5F,  0.5F,  -0.5F, 1.F, 1.F, 0.5F,  0.5F,  0.5F,  1.F, 0.F,
       0.5F,  0.5F,  0.5F,  1.F, 0.F, -0.5F, 0.5F,  0.5F,  0.F, 0.F, -0.5F, 0.5F,  -0.5F, 0.F, 1.F};
 
-    std::array<int, 6> indices = {// first triangle
-                                  0,
-                                  1,
-                                  3,
-                                  // second triangle
-                                  1,
-                                  2,
-                                  3};
+    auto indices = std::array<int, 6>{// first triangle
+                                      0,
+                                      1,
+                                      3,
+                                      // second triangle
+                                      1,
+                                      2,
+                                      3};
 
     // Vertex Buffer object
     auto VAO = unsigned{0};
@@ -195,24 +198,25 @@ auto render(Shader& shader_program, unsigned int VAO, unsigned int texture1, uns
     // create Projection matrix
     auto projection = glm::perspective(glm::radians(camera.get_zoom()), 800.F / 600.F, 0.1F, 100.F);
 
-    /// Send matrices to shader (this is usually done each frame since transformation matrices tend
-    /// to change a lot)
+    // Send matrices to shader (this is usually done each frame since transformation matrices tend
+    // to change a lot)
     shader_program.set_mat4("view", view);
     shader_program.set_mat4("projection", projection);
 
     // Draw square
     glBindVertexArray(VAO);
-    for (auto i{0}; i < 10; i++) {
-        // create Model matrix
-        auto model = glm::mat4(1.F);
-        model      = glm::translate(model, cube_positions[i]);
 
-        const auto angle = 20.F * static_cast<float>(i);
-        model            = glm::rotate(model, glm::radians(angle), glm::vec3(1.F, 0.3F, 0.5F));
-        shader_program.set_mat4("model", model);
-
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
+    int i = 0;
+    std::ranges::for_each(
+      std::as_const(cube_positions), [&i, &shader_program](const auto& cube_position) {
+          // create Model matrix
+          auto model       = glm::mat4(1.F);
+          model            = glm::translate(model, cube_position);
+          const auto angle = 20.F * static_cast<float>(i++);
+          model            = glm::rotate(model, glm::radians(angle), glm::vec3{1.F, 0.3F, 0.5F});
+          shader_program.set_mat4("model", model);
+          glDrawArrays(GL_TRIANGLES, 0, 36);
+      });
 }
 
 auto create_texture(const char* path, bool is_PNG) -> unsigned int {
