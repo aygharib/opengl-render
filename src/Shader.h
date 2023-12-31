@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>  // include glad to get all the required OpenGL headers
+#include <glad/glad.h> // include glad to get all the required OpenGL headers
 #include <glm/glm.hpp>
 
 #include <fstream>
@@ -9,11 +9,11 @@
 #include <string>
 
 class Shader {
-   private:
+private:
     // the program ID
     unsigned int ID{0};
 
-   public:
+public:
     // constructor reads and builds the shader
     Shader(const char* vertexPath, const char* fragmentPath);
     // use/activate the shader
